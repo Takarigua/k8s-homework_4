@@ -1,0 +1,66 @@
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv-local
+spec:
+  capacity:
+    storage: 100Mi
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  hostPath:
+    path: /tmp/pv-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-local
+spec:
+  volumeName: pv-local
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 50Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-exchange-pvc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: data-exchange-pvc
+  template:
+    metadata:
+      labels:
+        app: data-exchange-pvc
+    spec:
+      containers:
+      - name: writer
+        image: busybox
+        command: ["/bin/sh", "-c"]
+        args:
+          - >
+            while true; do
+              echo "$(date)" >> /data/shared.txt;
+              sleep 5;
+            done
+        volumeMounts:
+        - name: shared-pvc
+          mountPath: /data
+      - name: reader
+        image: busybox
+        command: ["/bin/sh", "-c"]
+        args:
+          - "tail -f /data/shared.txt"
+        volumeMounts:
+        - name: shared-pvc
+          mountPath: /data
+      volumes:
+      - name: shared-pvc
+        persistentVolumeClaim:
+          claimName: pvc-local
