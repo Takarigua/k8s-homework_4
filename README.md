@@ -124,7 +124,19 @@
   - `sc.yaml`
 - Скриншоты:
   - каждый шаг выполнения задания, начиная с шага 2
+
 ---
+
+### Ответ
+
+![6](https://github.com/Takarigua/k8s-homework_4/blob/133da182da819c035cdee2532c448b73b1216f67/screen/6.png)
+
+---
+
+![7](https://github.com/Takarigua/k8s-homework_4/blob/133da182da819c035cdee2532c448b73b1216f67/screen/7.png)
+
+---
+
 ## Шаблоны манифестов с учебными комментариями
 ### 1. Deployment (containers-data-exchange.yaml)
 ```yaml
